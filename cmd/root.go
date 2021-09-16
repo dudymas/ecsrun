@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/fatih/color"
 	"github.com/hokaccha/go-prettyjson"
@@ -208,24 +207,18 @@ func getProfile() string {
 }
 
 func initAwsSession(profile string) (*session.Session, error) {
-	credFile := viper.GetString("cred")
+	// credFile := viper.GetString("cred")
 
 	var sesh *session.Session
 	var err error
 
-	if credFile != "" {
-		sesh, err = session.NewSession(&aws.Config{
-			Credentials: credentials.NewSharedCredentials(credFile, profile),
-		})
-	} else {
-		sesh = session.Must(session.NewSessionWithOptions(session.Options{
-			Profile:           profile,
-			SharedConfigState: session.SharedConfigEnable,
-			Config: aws.Config{
-				CredentialsChainVerboseErrors: aws.Bool(true),
-			},
-		}))
-	}
+	sesh, err = session.NewSessionWithOptions(session.Options{
+		Profile:           profile,
+		SharedConfigState: session.SharedConfigEnable,
+		Config: aws.Config{
+			CredentialsChainVerboseErrors: aws.Bool(true),
+		},
+	})
 
 	return sesh, err
 }
